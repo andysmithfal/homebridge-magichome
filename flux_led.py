@@ -560,6 +560,9 @@ class WifiLedBulb():
 		self.turnOn(False)
 
 	def setWarmWhite(self, level, persist=True):
+                #no colour
+                nocolour = bytearray([0x31,0x00,0x00,0x00,0x00,0x00,0xf0,0x0f])
+                self.__write(nocolour)
 		if persist:
 			msg = bytearray([0x31])
 		else:
@@ -568,9 +571,11 @@ class WifiLedBulb():
 		msg.append(0x00)
 		msg.append(0x00)
 		msg.append(utils.percentToByte(level))
+                msg.append(0x00)
 		msg.append(0x0f)
 		msg.append(0x0f)
 		self.__write(msg)
+                #print(' '.join(r''+hex(letter)[2:] for letter in msg))
 
 	def setRgb(self, r,g,b, persist=True, setup="RGBW"):
 		if persist:
@@ -584,11 +589,15 @@ class WifiLedBulb():
 			msg.append(0x00)
 			msg.append(0xf0)
 		if setup == "RGBWW":
+                        #turn off white leds
+                        nowhite = bytearray([0x31,0x00,0x00,0x00,0x00,0x00,0x0f,0x0f])
+                        self.__write(nowhite)
 			msg.append(0x00)
 			msg.append(0x00)
-			msg.append(0xf0)
+                        msg.append(0xf0)
 		msg.append(0x0f)
 		self.__write(msg)
+                #print(' '.join(r''+hex(letter)[2:] for letter in msg))
 
 	def setPresetPattern(self, pattern, speed):
 
